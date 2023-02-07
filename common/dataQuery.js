@@ -9,9 +9,10 @@ const ethProvider = utils.getSignerFromPrivateKey(
   'https://bellecour.iex.ec', // blockchain node URL
   PRIVATE_KEY,
 );
-const iexec = new IExec({
-  ethProvider,
-});
+const configArgs = { ethProvider: ethProvider, chainId: 134 };
+const configOptions = { smsURL: "https://v7.sms.debug-tee-services.bellecour.iex.ec" };
+// const configOptions = { smsURL: "https://v7.sms.prod-tee-services.bellecour.iex.ec" };
+const iexec = new IExec(configArgs, configOptions);
 
 
 function generateDatasetNameLookup() {

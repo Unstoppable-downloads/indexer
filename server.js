@@ -63,6 +63,15 @@ app.get("/search", (req, res) => {
     res.json(result);
 });
 
+app.get("/searchOne", (req, res) => {
+    console.log("req.params", req.query) ;
+    let categories = [] ;
+
+    let result = indexingService.searchOne(req.query.terms, categories, req.query.count, req.query.uid)
+    res.set('Access-Control-Allow-Origin', '*');
+    res.json(result);
+})
+
 app.get("/recent", (req, res) => {
     let foo  = {"foo": "bar" } ; 
     console.log("req.body", req.body)
@@ -137,6 +146,7 @@ const server = app.listen(port, async () => {
     console.log("🚀 app is running on port ", port);
     console.log("Running on process id", process.pid);
     console.log("LOGLEVEL:", process.env.LOGLEVEL, "DEBUG", DEBUG);
+    console.log("app address", process.env.APP_ADDRESS)
 
     startTunnel(port)  ;
     //await init();
