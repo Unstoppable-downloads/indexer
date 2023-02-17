@@ -4,14 +4,16 @@ const createHttpLink = require("apollo-link-http").createHttpLink;
 const InMemoryCache = require("apollo-cache-inmemory").InMemoryCache;
 const gql = require("graphql-tag");
 const crypto = require("crypto-browserify");
-const { IExec, utils } = require("iexec");
-const JSZip = require("jszip");
+const { IExec, utils } = require('iexec');
+const decompress = require("decompress");
 
 const fetch = require("node-fetch");
 const searchEngine = require("./searchEngine");
 const dataAccess = require("./dataAccess");
 const dataQuery = require("./dataQuery");
-const delay = require("../utils/delay")
+const delay = require("../utils/delay");
+const downloadResult = require("./download");
+const observe = require("../utils/observe");
 const FETCHING_DATA_INTERVAL = 30000; // in 
 
 const { APP_ADDRESS, WORKERPOOL_ADDRESS, TEE_TAG, PRIVATE_KEY } = process.env;
@@ -75,9 +77,71 @@ const getDatasets = async function () {
   return await res;
 };
 
+
+
+
+const getDatasetOrderToMatch = async function (datasetId) {
+  var datasetOrders = await getDatasetOrders(datasetId);
+  var datasetOrderToMatch;
+  if (datasetOrders && datasetOrders[0]) {
+    datasetOrderToMatch = datasetOrders[0];
+  }
+
+  return datasetOrderToMatch;
+}
+
+const getOrdersToMatch = async function (dataset) {
+  var appOrders = await getAppOrders();
+  var appOrderToMatch = null;
+  if (appOrders && appOrders[0]) {
+    appOrderToMatch = appOrders[0];
+  }
+
+  var workerpoolOrders = await getWorkerpoolOrders();
+  var workerpoolOrderToMatch = null;
+  if (workerpoolOrders && workerpoolOrders[0]) {
+    workerpoolOrderToMatch = workerpoolOrders[0];
+  }
+
+  var datasetOrders = await getDatasetOrders(dataset.id);
+  var datasetOrderToMatch = null;
+  if (datasetOrders && datasetOrders[0]) {
+    datasetOrderToMatch = datasetOrders[0];
+  }
+
+  return {appOrderToMatch, workerpoolOrderToMatch, datasetOrderToMatch};
+}
+
+
+const makeRequestOrder = async function (datasetId) {
+  const requestOrderTemplate = await iexec.order.createRequestorder({
+    app: APP_ADDRESS,
+    category: 0,
+    dataset: datasetId,
+    workerpool: WORKERPOOL_ADDRESS,
+    tag: "tee",
+  });
+  console.log("Request order", requestOrderTemplate);
+  console.log("-----------------------------------------------");
+
+  const signedRequestOrder = await iexec.order.signRequestorder(
+    requestOrderTemplate
+  );
+  console.log("signedRequestOrder:", signedRequestOrder);
+
+  await iexec.order.publishRequestorder(signedRequestOrder)
+
+  return signedRequestOrder;
+}
+
 const pollRegistry = async function () {
+  console.log("Starting indexing")
   let datasets = await getDatasets();
   console.log("# of datasets", datasets.length)
+  console.log("\n-----------------------------------------------\n");
+
+  const indexerWallet =  await iexec.wallet.getAddress()
+  console.log("Indexer's wallet", indexerWallet)
   console.log("\n-----------------------------------------------\n");
 
   const ipfsToken = await iexec.storage.defaultStorageLogin();
@@ -92,86 +156,113 @@ const pollRegistry = async function () {
   if (appOrders && appOrders[0]) {
     appOrderToMatch = appOrders[0];
   }
-
   var workerpoolOrders = await getWorkerpoolOrders();
   var workerpoolOrderToMatch = null;
   if (workerpoolOrders && workerpoolOrders[0]) {
     workerpoolOrderToMatch = workerpoolOrders[0];
   }
 
-  var datasetOrders = await getDatasetOrders(datasets[0].id);
-  var datasetOrderToMatch = null;
-  if (datasetOrders && datasetOrders[0]) {
-    datasetOrderToMatch = datasetOrders[0];
-  }
+  datasets.forEach(async dataset => {
+    console.log(dataset.id)
+    let datasetOrderToMatch = await getDatasetOrderToMatch(dataset.id)
 
-  const requestOrderTemplate = await iexec.order.createRequestorder({
-    app: APP_ADDRESS,
-    category: 0,
-    dataset: datasets[0].id,
-    workerpool: WORKERPOOL_ADDRESS,
-    tag: "tee",
+    const datasetOrderHasDeals = (dataset.orders.length > 0 && dataset.orders[0] && dataset.orders[0].deals && dataset.orders[0].deals[0]) ? true : false
+    console.log("DatasetOrder has deals ?", datasetOrderHasDeals)
+
+    var datasetOrderHasDealsWithIndexer = false;
+    if (datasetOrderHasDeals === true) {
+      //console.log(dataset.orders[0].deals[0].tasks)
+      if (dataset.orders[0].deals[0].tasks.length > 0) {
+        for (let j = 0; j < dataset.orders[0].deals.length; j++) {
+          let oneDeal = await iexec.deal.show(dataset.orders[0].deals[j].id);
+          console.log(oneDeal)
+          if (oneDeal.requester === indexerWallet) {
+            datasetOrderHasDealsWithIndexer = true;
+          }
+        }
+      }
+    }
+    console.log("DatasetOrder has deals with Indexer ?", datasetOrderHasDealsWithIndexer)
+
+    if (!datasetOrderHasDeals && !datasetOrderHasDealsWithIndexer) {
+      await delay(3)
+      console.log("\n-----------------------------------------------\n");
+      console.info("Fetching apporder from iExec Marketplace")
+      console.log("-----------------------------------------------");
+      console.info("Fetching workerpoolorder from iExec Marketplace")
+      console.log("-----------------------------------------------");
+      console.info("Using dataset", dataset.id)
+      console.info("Fetching datasetorder from iExec Marketplace")
+      console.log("-----------------------------------------------");
+      console.info("Creating requestorder")
+      let requestOrderToMatch = await makeRequestOrder(dataset.id);
+      console.log("\n-----------------------------------------------\n");
+
+      console.log("App order", appOrderToMatch);
+      console.log("-----------------------------------------------");
+      // console.log("Workerpool order", workerpoolOrderToMatch);
+      console.log("Dataset order", datasetOrderToMatch);
+      console.log("-----------------------------------------------");
+      console.log("Request order", requestOrderToMatch);
+      console.log("\n-----------------------------------------------\n");
+
+      console.info("Matching orders...");
+      const { dealid, txHash } = await iexec.order.matchOrders({
+        apporder: appOrderToMatch.order,
+        datasetorder: datasetOrderToMatch.order,
+        workerpoolorder: workerpoolOrderToMatch.order,
+        requestorder: requestOrderToMatch,
+      });
+      console.info("Deal submitted with dealid", dealid);
+      console.log("\n-----------------------------------------------\n");
+
+      const deal = await iexec.deal.show(dealid);
+      console.log("Deal details", deal)
+    
+      await delay(10);
+
+      const waitFinalState = async (taskid, dealid) => {
+        new Promise((resolve, reject) => {
+          observe(resolve, reject, taskid, dealid)
+        })
+      }
+      console.log("task id", deal.tasks[0])
+      const task = await waitFinalState(deal.tasks[0], dealid)
+      console.log("Task", task)
+      //await downloadResult(task.taskid)
+    }
+
+    console.log("\n-----------------------------------------------")
+    console.log("------------ Finished with dataset ------------")
+    console.log("-----------------------------------------------\n")
   });
-  console.log("Request order", requestOrderTemplate);
-  console.log("\n-----------------------------------------------\n");
+  
 
-
-  const signedRequestOrder = await iexec.order.signRequestorder(
-    requestOrderTemplate
-  );
-  console.log("signedRequestOrder:", signedRequestOrder);
-
-  console.log("\n-----------------------------------------------\n");
-  console.log("Matching orders...");
-  console.log("App order", appOrderToMatch);
-  //   console.log("Workerpool order", workerpoolOrderToMatch);
-  console.log("Dataset order", datasetOrderToMatch);
-
-  const { dealid, txHash } = await iexec.order.matchOrders({
-    apporder: appOrderToMatch.order,
-    datasetorder: datasetOrderToMatch.order,
-    workerpoolorder: workerpoolOrderToMatch.order,
-    requestorder: signedRequestOrder,
-  });
-
-  console.log("deal id:", dealid);
-  console.log("Tx hash", txHash);
-  console.log("\n-----------------------------------------------\n");
-  const deal = await iexec.deal.show(dealid);
-  console.log("Deal details", deal)
-  console.log("\n-----------------------------------------------\n"); 
+  
   // await delay(10)
   // let task = await iexec.task.show(deal.tasks[0])
 
-  // let task = await iexec.task.show("0x8da96c251b6eeb9cbdf56c87c0a63cf668239637fa4b89fe9985bb260bbfa460")
+  // let task = await iexec.task.show("0xedd1a7e34afee21a938055e6f239f3a485d0ae9d17de8b743e2a416a6d23e14d")
   // console.log("Task[0] details", task)
   // console.log("\n-----------------------------------------------\n");
+
+
   // while (task.statusName !== 'COMPLETED') {
   //   await delay(20);
   //   task = await iexec.task.show("0x8da96c251b6eeb9cbdf56c87c0a63cf668239637fa4b89fe9985bb260bbfa460")
   // }
 
-  //const taskResult = await iexec.task.fetchResults(task); // fetch task id from table here
-  // console.log("task result", taskResult);
-  // const url = await taskResult.url;
-  // console.log("", url);
-  // const binary = await taskResult.blob();
-  // console.log("Response binary", binary);
-  // console.log("\n-----------------------------------------------\n");
-  // const zipInstance = new JSZip();
-  // let resultFileString = await zipInstance.loadAsync(binary).then((zip) => {
-  //   return zip.file("result.json").async("string");
-  // });
+  // await downloadResult(task.taskid)
 
-  // let resultFile = JSON.parse(resultFileString);
-  // console.log("resultFile", resultFile);
-  // return resultFile;
+
+
 
   // pour chaque dataset retourné, verifié s'il n'est pas deja traité par ce process (garder une liste des dataset addresses )
   // s'il n'est pas deja traité (c-a-d si il n'est pas dans la liste des dataset adress traité), alors il faut passer l'ordre d'achat et lancer la tache
   // pour recuperer le metadata contenu dans le dataset
   // Ajouter le metadata dans la liste en appelant searchEngine.indexDocument (metadata)
   // ...
+  
   // A la fin de la boucle, il faut relancer pollRegistry  avec un setTimeout(pollRegistry, 30 minutes)
 };
 

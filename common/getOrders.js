@@ -15,7 +15,7 @@ const configOptions = { smsURL: "https://v7.sms.debug-tee-services.bellecour.iex
 // const configOptions = { smsURL: "https://v7.sms.prod-tee-services.bellecour.iex.ec" };
 const iexec = new IExec(configArgs, configOptions);
 
-const getAppOrders = async() => {
+const getAppOrders = async () => {
  const { count, orders } = await iexec.orderbook.fetchAppOrderbook(
         APP_ADDRESS, {
             workerpool: WORKERPOOL_ADDRESS,

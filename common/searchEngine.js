@@ -1,6 +1,6 @@
 const MAX_SEARCH_RESULT = 1000;
 const MiniSearch = require('minisearch');
-let dataAccess;
+let _dataAccess;
 
 let miniSearch = new MiniSearch({
     fields: ['title', 'fileName', 'description'],
