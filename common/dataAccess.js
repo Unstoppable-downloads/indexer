@@ -18,7 +18,7 @@ const MetaData = Schema("MetaData", {
     title: { type: String , required: true },
     fileName: { type: String , required: true },
     description: { type: String },
-    categories: { type:  Array, required: true },
+    categories: { type:  String, required: true },
     fileSize: { type: Number, required: true },
     hash: { type: String },
     chunks: { type: Array, required: true },

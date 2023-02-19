@@ -46,11 +46,10 @@ exports.search = function (searchTerms, categories, count) {
 
     if (results && results.length > 0 && categories && categories.length > 0) {
         results = results.filter(item => {
-            let matchingCat = item.categories.filter(cat => {
-                return categories.indexOf(cat) > -1;
-            });
 
-            return matchingCat && matchingCat.length > 0;
+                // TODO: s'assurer ques toutes les categories (parames et celle stockee sont en minuscule)
+                return categories.indexOf(item.categories) != -1;
+            
         });
     }
 

@@ -297,6 +297,7 @@ module.exports.init = function () {
 };
 
 module.exports.add = function (item) {
+  // TODO: check first if items does not already exists before inserting ... 
   dataAccess.add(item);
   searchEngine.indexDocument(item);
 };
