@@ -4,7 +4,7 @@ let _dataAccess;
 
 let miniSearch = new MiniSearch({
     fields: ['title', 'fileName', 'description'],
-    storeFields: ['uid', 'title', 'fileName', 'description', 'categories', 'fileSize', 'hash', 'chunks', 'indexDate', 'nbDownloads', 'lastDownloadDate'],
+    storeFields: ['uid', 'title', 'fileName', 'description', 'category', 'fileSize', 'hash', 'chunks', 'indexDate', 'nbDownloads', 'lastDownloadDate'],
     searchOptions: {
         boost: { title: 2 },
         fuzzy: 0.2
@@ -39,17 +39,14 @@ exports.indexDocument = function (item) {
 }
 
 exports.search = function (searchTerms, categories, count) {
-
     count = undefined == count ? MAX_SEARCH_RESULT : count;
 
     let results = miniSearch.search(searchTerms);
 
     if (results && results.length > 0 && categories && categories.length > 0) {
         results = results.filter(item => {
-
                 // TODO: s'assurer ques toutes les categories (parames et celle stockee sont en minuscule)
-                return categories.indexOf(item.categories) != -1;
-            
+                return categories.indexOf(item.category) != -1;
         });
     }
 
@@ -74,7 +71,6 @@ exports.search = function (searchTerms, categories, count) {
 
 
 exports.searchRecent = function (categories, count) {
-
     let documents = _dataAccess.getAll();
 
     var cutOffDate = new Date();
@@ -85,19 +81,12 @@ exports.searchRecent = function (categories, count) {
     });
 
     results = results.sort((a, b) => { return b.indexDate - a.indexDate });
-
     count = undefined == count ? MAX_SEARCH_RESULT : count;
-
-    
 
 
     if (results && results.length > 0 && categories && categories.length > 0) {
         results = results.filter(item => {
-            let matchingCat = item.categories.filter(cat => {
-                return categories.indexOf(cat) > -1;
-            });
-
-            return matchingCat && matchingCat.length > 0;
+            return categories.indexOf(item.category) > -1
         });
     }
 

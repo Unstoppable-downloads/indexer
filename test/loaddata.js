@@ -29,7 +29,7 @@ const loadData = function () {
             "fileSize": Math.floor(Math.random() * (700000000 - 100000000 + 1)) + 10000000,
             "chunks": [],
             "hash": (Math.floor(Math.random() * (1000000 - 500000 + 1)) + 500000) + "",
-            "categories": ["movie"],
+            "category": "movie",
             "indexDate": idxDate.getTime() ,
             "description": title + " is a fantastic movie ranked #" + icount + " in the box office of all times !",
             "nbDownloads": 0
