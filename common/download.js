@@ -19,7 +19,7 @@ const configOptions = {
 // const configOptions = { smsURL: "https://v7.sms.prod-tee-services.bellecour.iex.ec" };
 const iexec = new IExec(configArgs, configOptions);
 
-const downloadResult = async (taskId) => {
+const downloadResult = async (taskId, firstIndexingDate) => {
   const taskResult = await iexec.task.fetchResults(taskId);
 
   console.log("Task result", await taskResult);
@@ -55,11 +55,6 @@ const updateMetadata = (newData) => {
   // TODO : Indexdate retrouver la date du premier deal pour mon wallet
 
 
-  console.log("parsedMetaData", parsedMetaData)  ;
-  // TODO : remove this 
-  //parsedMetaData.categories.push("music") ;
-
-  console.log("parsedMetaData", parsedMetaData);
   indexingService.add(parsedMetaData);
 
   /*
