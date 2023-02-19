@@ -1,10 +1,12 @@
 require("dotenv").config();
+const { IExec, utils } = require('iexec');
+
 const ApolloClient = require("apollo-client").ApolloClient;
 const createHttpLink = require("apollo-link-http").createHttpLink;
 const InMemoryCache = require("apollo-cache-inmemory").InMemoryCache;
 const gql = require("graphql-tag");
 const crypto = require("crypto-browserify");
-const { IExec, utils } = require('iexec');
+
 const decompress = require("decompress");
 
 const fetch = require("node-fetch");
@@ -15,6 +17,7 @@ const delay = require("../utils/delay");
 const downloadResult = require("./download");
 const observe = require("../utils/observe");
 const FETCHING_DATA_INTERVAL = 30000; // in 
+const STATUS_COMPLETED_TASK = 3;
 
 const { APP_ADDRESS, WORKERPOOL_ADDRESS, TEE_TAG, PRIVATE_KEY } = process.env;
 
@@ -109,11 +112,12 @@ const getOrdersToMatch = async function (dataset) {
     datasetOrderToMatch = datasetOrders[0];
   }
 
-  return {appOrderToMatch, workerpoolOrderToMatch, datasetOrderToMatch};
+  return { appOrderToMatch, workerpoolOrderToMatch, datasetOrderToMatch };
 }
 
 
 const makeRequestOrder = async function (datasetId) {
+
   const requestOrderTemplate = await iexec.order.createRequestorder({
     app: APP_ADDRESS,
     category: 0,
@@ -140,7 +144,7 @@ const pollRegistry = async function () {
   console.log("# of datasets", datasets.length)
   console.log("\n-----------------------------------------------\n");
 
-  const indexerWallet =  await iexec.wallet.getAddress()
+  const indexerWallet = await iexec.wallet.getAddress()
   console.log("Indexer's wallet", indexerWallet)
   console.log("\n-----------------------------------------------\n");
 
@@ -170,21 +174,41 @@ const pollRegistry = async function () {
     console.log("DatasetOrder has deals ?", datasetOrderHasDeals)
 
     var datasetOrderHasDealsWithIndexer = false;
+    var skipTaskExecution = false;
+
     if (datasetOrderHasDeals === true) {
       //console.log(dataset.orders[0].deals[0].tasks)
-      if (dataset.orders[0].deals[0].tasks.length > 0) {
-        for (let j = 0; j < dataset.orders[0].deals.length; j++) {
-          let oneDeal = await iexec.deal.show(dataset.orders[0].deals[j].id);
-          console.log(oneDeal)
-          if (oneDeal.requester === indexerWallet) {
-            datasetOrderHasDealsWithIndexer = true;
+
+      for (let j = 0; j < dataset.orders[0].deals.length; j++) {
+        let oneDeal = await iexec.deal.show(dataset.orders[0].deals[j].id);
+
+        if (oneDeal.requester === indexerWallet) {
+          datasetOrderHasDealsWithIndexer = true;
+
+          const tskId = oneDeal.tasks[0];
+
+          const theTask = await iexec.task.show(tskId);
+
+          console.log("theTask", theTask)
+
+          skipTaskExecution = skipTaskExecution || theTask.statusName === "COMPLETED" ||
+            theTask.statusName === "REVEALING" ||
+            theTask.statusName === "CLAIMED" ||
+            theTask.statusName === "ACTIVE";
+
+          if (theTask.status === STATUS_COMPLETED_TASK) {
+            console.log("Loading result for taskid", theTask.taskid)
+            await downloadResult(theTask.taskid);
+            requireTaskExecution = false;
+            break;
           }
+
         }
+
       }
     }
-    console.log("DatasetOrder has deals with Indexer ?", datasetOrderHasDealsWithIndexer)
 
-    if (!datasetOrderHasDeals && !datasetOrderHasDealsWithIndexer) {
+    if (!skipTaskExecution) {
       await delay(3)
       console.log("\n-----------------------------------------------\n");
       console.info("Fetching apporder from iExec Marketplace")
@@ -218,7 +242,7 @@ const pollRegistry = async function () {
 
       const deal = await iexec.deal.show(dealid);
       console.log("Deal details", deal)
-    
+
       await delay(10);
 
       const waitFinalState = async (taskid, dealid) => {
@@ -236,9 +260,9 @@ const pollRegistry = async function () {
     console.log("------------ Finished with dataset ------------")
     console.log("-----------------------------------------------\n")
   });
-  
 
-  
+
+
   // await delay(10)
   // let task = await iexec.task.show(deal.tasks[0])
 
@@ -262,7 +286,7 @@ const pollRegistry = async function () {
   // pour recuperer le metadata contenu dans le dataset
   // Ajouter le metadata dans la liste en appelant searchEngine.indexDocument (metadata)
   // ...
-  
+
   // A la fin de la boucle, il faut relancer pollRegistry  avec un setTimeout(pollRegistry, 30 minutes)
 };
 

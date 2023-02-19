@@ -3,10 +3,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { exec } = require('child_process');
+const { IExec, utils } = require('iexec');
+const { APP_ADDRESS, PRIVATE_KEY, TEE_TAG } = process.env;
 
 
-
-const indexingService = require("./common/indexingService.ts") ;
+const indexingService = require("./common/indexingService.js");
 
 const DEBUG = process.env.LOGLEVEL === "debug";
 // const bodyParser = require('body-parser');
@@ -23,13 +24,13 @@ var corsOptions = {
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
-  }
+}
 
 
-app.use(cors({origin:true,credentials: true}));
+app.use(cors({ origin: true, credentials: true }));
 
 const main = async () => {
-    await indexingService.init() ;
+    await indexingService.init();
 };
 
 
@@ -46,16 +47,15 @@ app.get("/", (req, res) => {
 });
 
 app.get("/search", (req, res) => {
-    let foo  = {"foo": "bar" } ; 
+    let foo = { "foo": "bar" };
 
-    console.log("req.params", req.query) ;
-    let categories = [] ; 
+    console.log("req.params", req.query);
+    let categories = [];
 
-    try{
-        categories = JSON.parse(req.query.categories)  ;
+    try {
+        categories = JSON.parse(req.query.categories);
     }
-    catch(e)
-    {
+    catch (e) {
 
     }
     let result = indexingService.search(req.query.terms, categories, req.query.count)
@@ -64,8 +64,8 @@ app.get("/search", (req, res) => {
 });
 
 app.get("/searchOne", (req, res) => {
-    console.log("req.params", req.query) ;
-    let categories = [] ;
+    console.log("req.params", req.query);
+    let categories = [];
 
     let result = indexingService.searchOne(req.query.terms, categories, req.query.count, req.query.uid)
     res.set('Access-Control-Allow-Origin', '*');
@@ -73,16 +73,15 @@ app.get("/searchOne", (req, res) => {
 })
 
 app.get("/recent", (req, res) => {
-    let foo  = {"foo": "bar" } ; 
+    let foo = { "foo": "bar" };
     console.log("req.body", req.body)
     console.log("req.params", req.query)
-    let categories = [] ; 
+    let categories = [];
 
-    try{
-        categories = JSON.parse(req.query.categories)  ;
+    try {
+        categories = JSON.parse(req.query.categories);
     }
-    catch(e)
-    {
+    catch (e) {
 
     }
     let result = indexingService.searchRecent(req.query.categories, req.query.count)
@@ -117,38 +116,46 @@ process.on('unhandledRejection', function (error, p) {
 
 return ;  */
 
-const startTunnel  =function (port)
-{
+const startTunnel = function (port) {
     let cmd = "ngrok http " + port + " &";
-    console.log(cmd) ; 
+    console.log(cmd);
 
 
-   exec(cmd, (error, stdout, stderr) => {
+    exec(cmd, (error, stdout, stderr) => {
         if (error) {
-          console.error(`error: ${error.message}`);
-          return;
+            console.error(`error: ${error.message}`);
+            return;
         }
-      
-        if (stderr) {
-          console.error(`stderr: ${stderr}`);
-          return;
-        }
-      
-        console.log(`stdout:\n${stdout}`);
-      });
 
-      return ; 
+        if (stderr) {
+            console.error(`stderr: ${stderr}`);
+            return;
+        }
+
+        console.log(`stdout:\n${stdout}`);
+    });
+
+    return;
 }
 
 
 let port = process.env.PORT || 5012
 const server = app.listen(port, async () => {
+
+    const ethProvider = utils.getSignerFromPrivateKey(
+        'https://bellecour.iex.ec', // blockchain node URL
+        PRIVATE_KEY,
+    );
+
+
     console.log("🚀 app is running on port ", port);
     console.log("Running on process id", process.pid);
     console.log("LOGLEVEL:", process.env.LOGLEVEL, "DEBUG", DEBUG);
+    console.log("indexer wallet address", ethProvider.address)
     console.log("app address", process.env.APP_ADDRESS)
 
-    startTunnel(port)  ;
+
+    startTunnel(port);
     //await init();
     await main();
 });
