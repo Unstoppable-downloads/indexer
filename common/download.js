@@ -37,13 +37,13 @@ const downloadResult = async (taskId, firstIndexingDate) => {
 
   let resultFile = JSON.parse(resultFileString);
   console.log("resultFile", JSON.parse(resultFile));
-  updateMetadata(resultFile)
+  updateMetadata(resultFile, firstIndexingDate)
   //metadata.push(JSON.parse(resultFile))
   return JSON.parse(resultFile);
 
 };
 
-const updateMetadata = (newData) => {
+const updateMetadata = (newData, firstIndexingDate) => {
 
   const parsedMetaData = JSON.parse(newData);
   if (!parsedMetaData.id) { parsedMetaData.id = parsedMetaData.uid };
@@ -53,7 +53,7 @@ const updateMetadata = (newData) => {
   if (!parsedMetaData.nbDownloads) { parsedMetaData.nbDownloads = 0 };
 
   // TODO : Indexdate retrouver la date du premier deal pour mon wallet
-
+  if (!parsedMetaData.indexDate) { parsedMetaData.indexDate = firstIndexingDate}
 
   indexingService.add(parsedMetaData);
 

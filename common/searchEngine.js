@@ -72,17 +72,20 @@ exports.search = function (searchTerms, categories, count) {
 
 exports.searchRecent = function (categories, count) {
     let documents = _dataAccess.getAll();
-
     var cutOffDate = new Date();
     cutOffDate.setMonth(cutOffDate.getMonth() - 3);
 
+
+    console.log(cutOffDate)
     let results = documents.filter((item) => {
-        return item.indexDate > cutOffDate.getTime()
+        // console.log(item.indexDate, Math.round(cutOffDate.getTime() / 1000))
+        return item.indexDate * 1000 > cutOffDate.getTime()
     });
+   
+
 
     results = results.sort((a, b) => { return b.indexDate - a.indexDate });
     count = undefined == count ? MAX_SEARCH_RESULT : count;
-
 
     if (results && results.length > 0 && categories && categories.length > 0) {
         results = results.filter(item => {
@@ -96,5 +99,3 @@ exports.searchRecent = function (categories, count) {
 
     return results;
 }
-
-

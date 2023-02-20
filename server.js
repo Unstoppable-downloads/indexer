@@ -54,8 +54,7 @@ app.get("/search", (req, res) => {
 
     try {
         categories = JSON.parse(req.query.categories);
-    }
-    catch (e) {
+    } catch (e) {
 
     }
     let result = indexingService.search(req.query.terms, categories, req.query.count)
@@ -90,14 +89,6 @@ app.get("/recent", (req, res) => {
 })
 
 
-// for fetching users
-//app.get("/users", (req, res) => {
-//    User.find({}).exec((err, users) => {
-//        err ? res.send("Error occured") : res.json(users);
-//    });
-//});
-
-
 process.on('uncaughtException', function (err) {
     console.error(process.pid, '- Caught exception unhandled exception: ', err);
 });
@@ -119,7 +110,6 @@ return ;  */
 const startTunnel = function (port) {
     let cmd = "ngrok http " + port + " &";
     console.log(cmd);
-
 
     exec(cmd, (error, stdout, stderr) => {
         if (error) {
