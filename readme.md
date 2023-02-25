@@ -2,7 +2,7 @@
 
 USDL is a decentralised file sharing application built on iExec infrastructure protocol and IPFS. 
 
-Our goal is to empower individuals with true ownership over their contents through decentralization and cryptography. Ultimately, this empowrement means that everyone bears the sole responsibility of what they share for the good or bad of the community. 
+Our goal is to empower individuals with true ownership over their contents through decentralization and cryptography. Ultimately, this empowerment means that everyone bears the sole responsibility of what they share for the good or bad of the community. 
 
 
 ## Economics and Value Network
