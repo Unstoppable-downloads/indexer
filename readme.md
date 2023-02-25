@@ -70,14 +70,13 @@ Optionaly, they can choose to donate to Content Providers
 ### Metadata 
 This data structure holds the information that is necessary for indexing. 
 
-
 | Property | Type | Description |
 | ------ | ------ | ------ |
 | title | string | File's title | 
 | fileName | string | Actual file name | 
 | uid | string | File unique identifier | 
 | fileSize | number | file size in bytes | 
-| chunks | Array<FileChunk> | Array of file chunks metadata | 
+| chunks | Array Of FileChunk | Array of file chunks metadata | 
 | hash | string | Hash of the file contents | 
 | imdb | string | IMDB id (applicable to Movies and Series) | 
 | imdb_starring | string | Actors / Cast (applicable to Movies and Series) |
@@ -86,7 +85,7 @@ This data structure holds the information that is necessary for indexing.
 | description | string | File description | 
 
 ### FileChunk
-Files are splitted across multiple chunks. FileChunk is the data structure that holds each chunk metadata.
+Files are splitted across multiple chunks. `FileChunk` is the data structure that holds each chunk metadata.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
