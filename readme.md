@@ -2,7 +2,7 @@
 
 USDL is a censorship-resistant content sharing infrastructure built on iExec and IPFS. 
 
-Our goal is to empower individuals with an unstoppable right to share artifacts with their community. This is achieved with decentralization and cryptography. 
+Our goal is to empower individuals with an unstoppable right to share any artifacts with their community. This is achieved with decentralization and cryptography. 
 Ultimately, this empowerment means that everyone bears the sole responsibility of what they share for the good or bad of the community. 
 
 
@@ -34,7 +34,7 @@ Our goal is to empower individuals with true ownership over their contents throu
 
 
 ## Economics
-We believe that a service like USDL is viable only if it serves a sustainable economical model, based on transfers of value between  network participants.
+We believe that a service like USDL is viable only if it serves a sustainable economic model, based on transfers of value between  network participants.
 
 ### The value network
 We distinguish 3 main network participants : Content Providers, Indexers, Content Consumers. The diagram below illustrated how values flows in USDL's ecosystem.
