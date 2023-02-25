@@ -85,7 +85,7 @@ This data structure holds the information that is necessary for indexing.
 | description | string | File description | 
 
 ### FileChunk
-Files are splitted across multiple chunks. `FileChunk` is the data structure that holds each chunk metadata.
+Files are splitted across multiple chunks. `FileChunk` is the data structure that holds each chunk's metadata.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
@@ -93,8 +93,8 @@ Files are splitted across multiple chunks. `FileChunk` is the data structure tha
 | size | Number | Size of the file part |
 | checksum | number | Checksum |
 | sequence | number | sequence number of this file part |
-| byteBegin | number | |
-| byteEnd | number | |
+| byteBegin | number | Starting byte index of this chunk |
+| byteEnd | number | Ending byte index of this chunk |
 
 
 ## Unstoppable architecture
