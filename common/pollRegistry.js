@@ -204,16 +204,15 @@ const pollRegistry = async function () {
       const deal = await iexec.deal.show(dealid);
       console.log("Deal details", deal);
 
-      await delay(10);
 
-      const waitFinalState = async (taskid, dealid) => {
-        new Promise((resolve, reject) => {
-          observe(resolve, reject, taskid, dealid);
-        });
-      };
-      console.log("task id", deal.tasks[0]);
-      const task = await waitFinalState(deal.tasks[0], dealid);
-      console.log("Task", task);
+    //   const waitFinalState = async (taskid, dealid) => {
+    //     new Promise((resolve, reject) => {
+    //       observe(resolve, reject, taskid, dealid);
+    //     });
+    //   };
+    //   console.log("task id", deal.tasks[0]);
+    //   const task = await waitFinalState(deal.tasks[0], dealid);
+    //   console.log("Task", task);
       //await downloadResult(task.taskid)
     }
 

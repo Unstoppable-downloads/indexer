@@ -1,16 +1,18 @@
 require("dotenv").config();
 const indexingService = require("./indexingService.js");
-const fs = require('fs');
+const fs = require("fs");
 const JSZip = require("jszip");
 const crypto = require("crypto-browserify");
+var nameToImdb = require("name-to-imdb");
+
 const { IExec, utils } = require("iexec");
-var metadata = require("../databases/MetaData.json")
+var metadata = require("../databases/MetaData.json");
 
 const { APP_ADDRESS, WORKERPOOL_ADDRESS, TEE_TAG, PRIVATE_KEY } = process.env;
 
 const ethProvider = utils.getSignerFromPrivateKey(
-  'https://bellecour.iex.ec', // blockchain node URL
-  PRIVATE_KEY,
+  "https://bellecour.iex.ec", // blockchain node URL
+  PRIVATE_KEY
 );
 const configArgs = { ethProvider: ethProvider, chainId: 134 };
 const configOptions = {
@@ -29,31 +31,42 @@ const downloadResult = async (taskId, firstIndexingDate) => {
   console.log("Response binary", binary);
   console.log("\n-----------------------------------------------\n");
 
-  let zipInstance = new JSZip()
-  let resultFileString = await zipInstance.loadAsync(binary)
-    .then((zip) => {
-      return zip.file("result.json").async("string");
-    });
+  let zipInstance = new JSZip();
+  let resultFileString = await zipInstance.loadAsync(binary).then((zip) => {
+    return zip.file("result.json").async("string");
+  });
 
   let resultFile = JSON.parse(resultFileString);
   console.log("resultFile", JSON.parse(resultFile));
-  updateMetadata(resultFile, firstIndexingDate)
+  await updateMetadata(resultFile, firstIndexingDate);
   //metadata.push(JSON.parse(resultFile))
   return JSON.parse(resultFile);
-
 };
 
-const updateMetadata = (newData, firstIndexingDate) => {
-
+const updateMetadata = async (newData, firstIndexingDate) => {
   const parsedMetaData = JSON.parse(newData);
-  if (!parsedMetaData.id) { parsedMetaData.id = parsedMetaData.uid };
+  if (!parsedMetaData.id) {
+    parsedMetaData.id = parsedMetaData.uid;
+  }
 
-  // TODO trouver une solution pour garder le nombre de downloads 
-  // censorship resistant. 
-  if (!parsedMetaData.nbDownloads) { parsedMetaData.nbDownloads = 0 };
+  // TODO trouver une solution pour garder le nombre de downloads
+  // censorship resistant.
+  if (!parsedMetaData.nbDownloads) {
+    parsedMetaData.nbDownloads = 0;
+  }
 
   // TODO : Indexdate retrouver la date du premier deal pour mon wallet
-  if (!parsedMetaData.indexDate) { parsedMetaData.indexDate = firstIndexingDate}
+  if (!parsedMetaData.indexDate) {
+    parsedMetaData.indexDate = firstIndexingDate;
+  }
+
+  if (parsedMetaData && (parsedMetaData.category === "movie" || parsedMetaData.category === "series")) {
+    const imdbInfo = await getIMDBInfo()
+    if (imdbInfo && imdbInfo.meta) {
+      parsedMetaData.imdbImageUrl = imdbInfo.meta.image.src; //URL du result
+      parsedMetaData.year = imdbInfo.meta.year;
+    }
+  }
 
   indexingService.add(parsedMetaData);
 
@@ -70,8 +83,25 @@ const updateMetadata = (newData, firstIndexingDate) => {
   // fs.writeFile("databases/MetaData.json", newData, (err) => {
   //   if(err) throw err;
   // }) */
-}
+};
 
+const getIMDBInfo = async () => {
+  const getIMDBResult = new Promise((resolve, reject) => {
+    nameToImdb("Saw", async function (err, res, inf) {
+      try {
+        resolve(inf);
+      } catch (err) {
+          console.log(err)
+      }
+    });
+  });
+
+  const imdbInfo = getIMDBResult.then((info) => {
+    return info;
+  });
+
+  return await imdbInfo;
+};
 
 
 module.exports = downloadResult;

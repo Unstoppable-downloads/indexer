@@ -29,8 +29,10 @@
     "iexec": "^7.2.3",
     "jszip": "^3.10.1",
     "minisearch": "^6.0.0",
+    "name-to-imdb": "^3.0.4",
     "node-fetch": "^2.6.7",
-    "node-telegram-bot-api": "^0.60.0"
+    "node-telegram-bot-api": "^0.60.0",
+    "omdb": "^0.8.0"
   },
   "devDependencies": {
     "constants-browserify": "^1.0.0",

@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const { exec } = require('child_process');
 const { IExec, utils } = require('iexec');
+var nameToImdb = require("name-to-imdb")
 const { APP_ADDRESS, PRIVATE_KEY, TEE_TAG } = process.env;
 
 
@@ -71,6 +72,35 @@ app.get("/searchOne", (req, res) => {
     res.json(result);
 })
 
+app.get("/fetchImdb", async(req, res) => {
+    console.log("req.params", req.query);
+    //)
+
+    const getIMDBResult = new Promise((resolve, reject) => {
+        nameToImdb("Saw", async function (err, res, inf) {
+            // try {
+            //     console.log(res); // "tt0121955"
+            //     // inf contains info on where we matched that name - e.g. metadata, or on imdb
+            //     // and the meta object with all the available data
+            //     // console.log("result", inf);
+            //     return inf;
+                
+            // } catch (err) {
+            //     console.log(err)
+            // }
+            // console.log("inf", inf)
+            resolve(inf);
+        })
+    })
+    let info = await getIMDBResult()
+    
+
+    //console.log("result", await result)
+    console.log("test", test)
+    res.set('Access-Control-Allow-Origin', '*');
+    // res.json(result);
+}),
+
 app.get("/recent", (req, res) => {
     let foo = { "foo": "bar" };
     console.log("req.body", req.body)
@@ -136,7 +166,6 @@ const server = app.listen(port, async () => {
         'https://bellecour.iex.ec', // blockchain node URL
         PRIVATE_KEY,
     );
-
 
     console.log("🚀 app is running on port ", port);
     console.log("Running on process id", process.pid);
