@@ -5,7 +5,7 @@ const ApolloClient = require("apollo-client").ApolloClient;
 const InMemoryCache = require("apollo-cache-inmemory").InMemoryCache;
 const gql = require("graphql-tag");
 const crypto = require("crypto-browserify");
-
+const fetch = require("node-fetch");
 const delay = require("../utils/delay");
 const downloadResult = require("./download");
 const observe = require("../utils/observe");
