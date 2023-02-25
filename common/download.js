@@ -60,11 +60,12 @@ const updateMetadata = async (newData, firstIndexingDate) => {
     parsedMetaData.indexDate = firstIndexingDate;
   }
 
-  if (parsedMetaData && (parsedMetaData.category === "movie" || parsedMetaData.category === "series")) {
-    const imdbInfo = await getIMDBInfo()
+  if (parsedMetaData && parsedMetaData.category && (parsedMetaData.category === "movie" || parsedMetaData.category === "series")) {
+    const imdbInfo = await getIMDBInfo(parsedMetaData.title)
     if (imdbInfo && imdbInfo.meta) {
       parsedMetaData.imdbImageUrl = imdbInfo.meta.image.src; //URL du result
       parsedMetaData.year = imdbInfo.meta.year;
+      parsedMetaData.starring = imdbInfo.meta.starring;
     }
   }
 
@@ -85,9 +86,9 @@ const updateMetadata = async (newData, firstIndexingDate) => {
   // }) */
 };
 
-const getIMDBInfo = async () => {
+const getIMDBInfo = async (title) => {
   const getIMDBResult = new Promise((resolve, reject) => {
-    nameToImdb("Saw", async function (err, res, inf) {
+    nameToImdb(title, async function (err, res, inf) {
       try {
         resolve(inf);
       } catch (err) {
