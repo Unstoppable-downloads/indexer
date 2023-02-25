@@ -37,7 +37,7 @@ Optionaly, they can choose to donate to Content Providers
 
 ## Data Model
 
-# Metadata 
+### Metadata 
 This data structure holds the information that is necessary for content indexing. 
 
 
