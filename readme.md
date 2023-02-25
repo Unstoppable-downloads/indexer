@@ -17,6 +17,7 @@ Ultimately, this empowerment means that everyone bears the sole responsibility o
     - [Content Consumers](#content-consumers)
   - [Data Model](#data-model)
     - [Metadata](#metadata)
+    - [FileChunk](#filechunk)
   - [Unstoppable architecture](#unstoppable-architecture)
     - [Current topology](#current-topology)
     - [Way forward](#way-forward)
@@ -42,9 +43,9 @@ We distinguish 3 main network participants : Content Providers, Indexers, Conten
 ![USDL Value Network](./media/usdl_value_network.png)
 
 ### Content Providers
-The value they bring to the network is the content they produced or acquired. 
+The value they bring to the network is the content they created or acquired. 
 Content Providers have the option to directly sell their content's metadata (see data model section) to Indexers. 
-Monetization is achieved by using iExec's marketplace built-in governance rules where dataset can be sold in exchange of $RLC (iExec's marketplace utility token)
+Monetization is achieved by using iExec's marketplace built-in governance rules where datasets can be sold in exchange of $RLC (iExec's marketplace utility token)
 
 ### Indexers
 The value they bring to Content Consumers is the aggregated searchable index of content. 
@@ -70,15 +71,31 @@ Optionaly, they can choose to donate to Content Providers
 This data structure holds the information that is necessary for content indexing. 
 
 
-title: string
-fileName: string
-uid:string
-fileSize: number
-chunks: Array<FileChunk>
-hash: string
-imdb: string
-category: Array<string>
-description: string
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| title | string | File's title | 
+| fileName | string | Actual file name | 
+| uid | string | File unique identifier | 
+| fileSize | number | file size in bytes | 
+| chunks | Array<FileChunk> | Array of file chunk metadata | 
+| hash | string | Hash of the file contents | 
+| imdb | string | IMDB id (applicable to Movies and Series) | 
+| imdb_starring | string | Actors / Cast (applicable to Movies and Series) |
+| imdb_year | string | Year of release (applicable to Movies and Series)  |
+| category | string | Indexing category for the file | 
+| description | string | File description | 
+
+### FileChunk
+Files are splitted across multiple chunks. FileChunk is the data structure that holds each chunk metadata.
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| cid | string | IPFS Content Identifier of the file part |
+| size | Number | Size of the file part |
+| checksum | number | Checksum |
+| sequence | number | sequence number of this file part |
+| byteBegin | number | |
+| byteEnd | number | |
 
 
 ## Unstoppable architecture
