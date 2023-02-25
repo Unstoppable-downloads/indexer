@@ -20,7 +20,7 @@ Monetization is achieved by using iExec's marketplace built-in governance rules 
 ### Indexers
 The value they bring to Content Consumers is the aggregated searchable index of content. 
 
-Indexers can choose to incentivize Content Providers i.e. buying metadata datasets on iExec's marketplace
+Indexers can choose to incentivize Content Providers i.e. buying metadata datasets on iExec's marketplace. 
 
 Also, Indexers have the option to implement their own conditional access to contents should they want to maximize XXXXXXXX 
 
@@ -31,15 +31,38 @@ Also, Indexers have the option to implement their own conditional access to cont
 
 
 ### Content Consumers
-The value they bring to the network is their attention (traffic) that Indexers can monetize with Advertising or Affiliate platforms. 
-Optionaly, they can choose to donate Content Providers for 
+The value they bring to the network is their attention (traffic) that Indexers can monetize from Advertising or Affiliate platforms. 
+Optionaly, they can choose to donate to Content Providers 
 
 
 ## Data Model
 
+# Metadata 
+This data structure holds the information that is necessary for content indexing. 
+
+
+title: string
+fileName: string
+uid:string
+fileSize: number
+chunks: Array<FileChunk>
+hash: string
+imdb: string
+category: Array<string>
+description: string
+
+
+## Unstoppable architecture
+
+### Current topology
+
+### Way forward 
+
+### Alternative way forward
 
 ## Content publishing workflow
 
-
 ## Content indexing workflow
+
+## Content consuming workflow
 
