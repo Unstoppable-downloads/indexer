@@ -1,14 +1,43 @@
 # USDL - UnStoppable DownLoads 
 
+USDL is a censorship-resistant content sharing infrastructure built on iExec and IPFS. 
+
+Our goal is to empower individuals with an unstoppable right to share artifacts with their community. This is achieved with decentralization and cryptography. 
+Ultimately, this empowerment means that everyone bears the sole responsibility of what they share for the good or bad of the community. 
+
+
+
+## Contents
+- [USDL - UnStoppable DownLoads](#usdl---unstoppable-downloads)
+  - [Contents](#contents)
+  - [Economics](#economics)
+    - [The value network](#the-value-network)
+    - [Content Providers](#content-providers)
+    - [Indexers](#indexers)
+    - [Content Consumers](#content-consumers)
+  - [Data Model](#data-model)
+    - [Metadata](#metadata)
+  - [Unstoppable architecture](#unstoppable-architecture)
+    - [Current topology](#current-topology)
+    - [Way forward](#way-forward)
+    - [Alternative way forward](#alternative-way-forward)
+  - [Workflows](#workflows)
+    - [Content publishing workflow](#content-publishing-workflow)
+    - [Content indexing workflow](#content-indexing-workflow)
+    - [Content consuming workflow](#content-consuming-workflow)
+
+---
+
 USDL is a decentralised file sharing application built on iExec infrastructure protocol and IPFS. 
 
 Our goal is to empower individuals with true ownership over their contents through decentralization and cryptography. Ultimately, this empowerment means that everyone bears the sole responsibility of what they share for the good or bad of the community. 
 
 
-## Economics and Value Network
+## Economics
 We believe that a service like USDL is viable only if it serves a sustainable economical model, based on transfers of value between  network participants.
-We distinguish 3 main network participants : Content Providers, Indexers, Content Consumers. The diagram below illustrated how values flows in USDL's ecosystem.
 
+### The value network
+We distinguish 3 main network participants : Content Providers, Indexers, Content Consumers. The diagram below illustrated how values flows in USDL's ecosystem.
 
 ![USDL Value Network](./media/usdl_value_network.png)
 
@@ -60,9 +89,14 @@ description: string
 
 ### Alternative way forward
 
-## Content publishing workflow
+## Workflows
 
-## Content indexing workflow
+### Content publishing workflow
 
-## Content consuming workflow
+### Content indexing workflow
 
+### Content consuming workflow
+
+
+
+[def]: #usdl---unstoppable-downloads
