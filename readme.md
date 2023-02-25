@@ -87,6 +87,8 @@ This data structure holds the information that is necessary for indexing.
 ### FileChunk
 Files are splitted across multiple chunks. `FileChunk` is the data structure that holds each chunk's metadata.
 
+![USDL File Split](./media/usdl_file_split.png)
+
 | Property | Type | Description |
 | ------ | ------ | ------ |
 | cid | string | IPFS Content Identifier of the file part |
@@ -108,6 +110,7 @@ Files are splitted across multiple chunks. `FileChunk` is the data structure tha
 ## Workflows
 
 ### Content publishing workflow
+
 
 ### Content indexing workflow
 
