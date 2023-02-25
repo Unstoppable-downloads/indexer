@@ -22,7 +22,7 @@ The value they bring to Content Consumers is the aggregated searchable index of 
 
 Indexers can choose to incentivize Content Providers i.e. buying metadata datasets on iExec's marketplace
 
-Indexers have the option to implement their own conditional access to contents. 
+Also, Indexers have the option to implement their own conditional access to contents should they want to maximize XXXXXXXX 
 
 - Content Consumer must have at least x $RLC in their wallet
 - Content Consumer must own a given NFT 
