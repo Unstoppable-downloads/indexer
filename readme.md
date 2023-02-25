@@ -68,7 +68,7 @@ Optionaly, they can choose to donate to Content Providers
 ## Data Model
 
 ### Metadata 
-This data structure holds the information that is necessary for the indexing. 
+This data structure holds the information that is necessary for indexing. 
 
 
 | Property | Type | Description |
@@ -77,7 +77,7 @@ This data structure holds the information that is necessary for the indexing.
 | fileName | string | Actual file name | 
 | uid | string | File unique identifier | 
 | fileSize | number | file size in bytes | 
-| chunks | Array<FileChunk> | Array of file chunk metadata | 
+| chunks | Array<FileChunk> | Array of file chunks metadata | 
 | hash | string | Hash of the file contents | 
 | imdb | string | IMDB id (applicable to Movies and Series) | 
 | imdb_starring | string | Actors / Cast (applicable to Movies and Series) |
