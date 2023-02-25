@@ -6,7 +6,8 @@ Our goal is to empower individuals with true ownership over their contents throu
 
 
 ## Economics and Value Network
-We believe that a service like USDL is viable only if it serves a sustainable economical model, based on transfers of value between  network participants. We distinguish 3 main network participants : Content Providers, Indexers, Content Consumers. The diagram below illustrated how values flows in USDL's ecosystem.
+We believe that a service like USDL is viable only if it serves a sustainable economical model, based on transfers of value between  network participants.
+We distinguish 3 main network participants : Content Providers, Indexers, Content Consumers. The diagram below illustrated how values flows in USDL's ecosystem.
 
 
 ![USDL Value Network](./media/usdl_value_network.png)
@@ -14,7 +15,7 @@ We believe that a service like USDL is viable only if it serves a sustainable ec
 ### Content Providers
 The value they bring to the network is the content they produced or acquired. 
 Content Providers have the option to directly sell their content's metadata (see data model section) to Indexers. 
-Monetization is achieved by using iExec's marketplace governance rules where dataset can be sold in exchange of $RLC (iExec's marketplace utility token)
+Monetization is achieved by using iExec's marketplace built-in governance rules where dataset can be sold in exchange of $RLC (iExec's marketplace utility token)
 
 ### Indexers
 The value they bring to Content Consumers is the aggregated searchable index of content. 
