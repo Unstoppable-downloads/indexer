@@ -1,7 +1,5 @@
 require("dotenv").config();
 const { IExec, utils } = require('iexec');
-
-
 const decompress = require("decompress");
 const fetch = require("node-fetch");
 const searchEngine = require("./searchEngine");
@@ -37,7 +35,8 @@ module.exports.init = function() {
 
 module.exports.add = function(item) {
     // TODO: check first if items does not already exists before inserting ... 
-    dataAccess.add(item);
+    
+    //dataAccess.add(item);
     searchEngine.indexDocument(item);
 };
 

@@ -1,6 +1,6 @@
 {
   "name": "indexer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -27,8 +27,10 @@
     "fetch-cookie": "^2.1.0",
     "graphql-tag": "^2.12.6",
     "iexec": "^7.2.3",
+    "ipfs-core": "^0.18.0",
     "jszip": "^3.10.1",
     "minisearch": "^6.0.0",
+    "movier": "^3.0.0",
     "name-to-imdb": "^3.0.4",
     "node-fetch": "^2.6.7",
     "node-telegram-bot-api": "^0.60.0",
