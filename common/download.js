@@ -5,7 +5,8 @@ const JSZip = require("jszip");
 const crypto = require("crypto-browserify");
 var nameToImdb = require("name-to-imdb");
 var movier = require("movier")
-
+var pinCIDs;
+import ("./ipfs/ipfsNode.mjs").then(ipfsNode => pinCIDs = ipfsNode.pinCIDs)
 const { IExec, utils } = require("iexec");
 var metadata = require("../databases/MetaData.json");
 
@@ -79,7 +80,14 @@ const updateMetadata = async (newData, firstIndexingDate) => {
 
     const isAlreadyInMD = md.some(item => item.uid === parsedMetaData.uid)
 
-    if (!isAlreadyInMD) indexingService.add(parsedMetaData);
+    if (!isAlreadyInMD) {
+      indexingService.add(parsedMetaData);
+      if (parsedMetaData.chunks) {
+        parsedMetaData.chunks.forEach(async chunk => {
+          await pinCIDs(chunk.cid)
+        });
+      }
+    }
   } catch (er) {
     console.log(er)
   }
