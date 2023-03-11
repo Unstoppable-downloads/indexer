@@ -4,7 +4,9 @@ const fs = require("fs");
 const JSZip = require("jszip");
 const crypto = require("crypto-browserify");
 var nameToImdb = require("name-to-imdb");
-
+var movier = require("movier")
+var pinCIDs;
+import ("./ipfs/ipfsNode.mjs").then(ipfsNode => pinCIDs = ipfsNode.pinCIDs)
 const { IExec, utils } = require("iexec");
 var metadata = require("../databases/MetaData.json");
 
@@ -63,13 +65,34 @@ const updateMetadata = async (newData, firstIndexingDate) => {
   if (parsedMetaData && parsedMetaData.category && (parsedMetaData.category === "movie" || parsedMetaData.category === "series")) {
     const imdbInfo = await getIMDBInfo(parsedMetaData.title)
     if (imdbInfo && imdbInfo.meta) {
-      parsedMetaData.imdbImageUrl = imdbInfo.meta.image.src; //URL du result
-      parsedMetaData.year = imdbInfo.meta.year;
-      parsedMetaData.starring = imdbInfo.meta.starring;
+      if (imdbInfo.meta.image.src) parsedMetaData.imdbImageUrl = imdbInfo.meta.image.src; //URL du result
+      if (imdbInfo.meta.year)      parsedMetaData.year = imdbInfo.meta.year;
+      if (imdbInfo.meta.starring)  parsedMetaData.starring = imdbInfo.meta.starring
+    }
+
+    const moreDetails = await movier.getTitleDetailsByName(parsedMetaData.title);
+    if (moreDetails.directors[0].name) {
+      parsedMetaData.directedBy = moreDetails.directors[0].name;
     }
   }
+  try {
+    const md = JSON.parse(fs.readFileSync("databases/MetaData.json"))
 
-  indexingService.add(parsedMetaData);
+    const isAlreadyInMD = md.some(item => item.uid === parsedMetaData.uid)
+
+    if (!isAlreadyInMD) {
+      indexingService.add(parsedMetaData);
+      if (parsedMetaData.chunks) {
+        parsedMetaData.chunks.forEach(async chunk => {
+          await pinCIDs(chunk.cid)
+        });
+      }
+    }
+  } catch (er) {
+    console.log(er)
+  }
+  
+  
 
   /*
   fs.readFile("databases/MetaData.json", (err, data) => {
