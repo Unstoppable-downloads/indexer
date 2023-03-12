@@ -29,16 +29,11 @@ Ultimately, this empowerment means that everyone bears the sole responsibility o
 
 ---
 
-USDL is a decentralised file sharing application built on iExec infrastructure protocol and IPFS. 
-
-Our goal is to empower individuals with true ownership over their contents through decentralization and cryptography. Ultimately, this empowerment means that everyone bears the sole responsibility of what they share for the good or bad of the community. 
-
-
 ## Economics
 We believe that a service like USDL is viable only if it serves a sustainable economic model, based on transfers of value between  network participants.
 
 ### The value network
-We distinguish 3 main network participants : Content Providers, Indexers, Content Consumers. The diagram below illustrated how values flows in USDL's ecosystem.
+We distinguish 3 main network participants : Content Providers, Indexers, Content Consumers. The diagram below illustrates how the value flows within USDL's ecosystem.
 
 ![USDL Value Network](./media/usdl_value_network.png)
 
@@ -52,7 +47,7 @@ The value they bring to Content Consumers is the aggregated searchable index of 
 
 Indexers can choose to incentivize Content Providers i.e. buying metadata datasets on iExec's marketplace. 
 
-Also, Indexers have the option to implement their own conditional access to contents should they want to maximize XXXXXXXX 
+Also, Indexers have the option to implement their own conditional access their index should they want to maximize XXXXXXXX 
 
 - Content Consumer must have at least x $RLC in their wallet
 - Content Consumer must own a given NFT 
