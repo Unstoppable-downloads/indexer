@@ -114,6 +114,28 @@ Files are splitted across multiple chunks. `FileChunk` is the data structure tha
 
 ### Content indexing workflow
 
+The indexer NodeJS program has a dual funtionality : 
+- Metadata database
+- IPFS node
+
+This way the indexing workflow happens in 5 steps
+
+#### Step 1: fetching dataset orders
+The indexing service fetches all the iExec dataset orders for the USDL app. For each dataset order, if a deal has been found for indexer's wallet address as a requester, the second step is skipped.
+
+#### Step 2: matching orders
+For each dataset order found, a new request order is created, signed, published, and matched with each of the dataset orders.
+
+#### Step 3: fetch tasks results
+The results of the tasks started at the time of their respective deals will be added to the local database if is not already in the database.
+
+#### Step 4: verify chunks' availability
+For each element in the metadata DB, the indexer shall verify if the element's chunks are available on IPFS. If they are step 5 is skipped.
+
+#### Step 5: pin chunks' CIDs
+The metadata chunks CID are pinned to the indexer IPFS local node so that the chunks can be available on IPFS at anytime.
+
+
 ### Content consuming workflow
 
 
