@@ -74,6 +74,9 @@ const updateMetadata = async (newData, firstIndexingDate) => {
     if (moreDetails.directors[0].name) {
       parsedMetaData.directedBy = moreDetails.directors[0].name;
     }
+    if (moreDetails.mainSource.sourceUrl){
+      parsedMetaData.imdbRessourceUrl = moreDetails.mainSource.sourceUrl;
+    }
   }
   try {
     const md = JSON.parse(fs.readFileSync("databases/MetaData.json"))

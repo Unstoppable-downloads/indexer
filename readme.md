@@ -109,26 +109,26 @@ Files are splitted across multiple chunks. `FileChunk` is the data structure tha
 
 ### Content indexing workflow
 
-The indexer NodeJS program has a dual funtionality : 
+The indexer NodeJS program has a dual functionality : 
 - Metadata database
 - IPFS node
 
 This way the indexing workflow happens in 5 steps
 
 #### Step 1: fetching dataset orders
-The indexing service fetches all the iExec dataset orders for the USDL app. For each dataset order, if a deal has been found for indexer's wallet address as a requester, the second step is skipped.
+The indexing service fetches all the iExec dataset orders published by the uploaders for the USDL app. By doing this, the indexing service gets all the files uploaded on UDSL. For each dataset order, if a deal has been found for indexer's wallet address as a requester, it means that the file has already been indexed in the service's Metadata. In that case, the second step is skipped.
 
 #### Step 2: matching orders
-For each dataset order found, a new request order is created, signed, published, and matched with each of the dataset orders.
+For each dataset order found, a new request order is created, signed and published in the marketplace, with the indexer's local wallet address as a requester. The request order is then matched with each of the dataset orders. From this matching, a deal will be generated which means the indexer will be able to access the resultof its task, in this case the details of the file to index.
 
 #### Step 3: fetch tasks results
-The results of the tasks started at the time of their respective deals will be added to the local database if is not already in the database.
+Each task result contains the IPFS chunks of the file to index. The results of the tasks started at the time of their respective deals will be decrypted by the app, before being added to the local database if is not already in it.
 
 #### Step 4: verify chunks' availability
-For each element in the metadata DB, the indexer shall verify if the element's chunks are available on IPFS. If they are step 5 is skipped.
+The Metadata DB is a object of chunks. The CIDs are only added to IPFS when the uploader uploads a file. That's why, given the principle of IPFS, they may not be available at anytime and it is important to make sure the CID's are available at anytime so that the dowloads stay unstoppable. Therefore, for each chunk in the metadata DB, the indexer shall verify if it is available on IPFS. If they are step 5 is skipped.
 
 #### Step 5: pin chunks' CIDs
-The metadata chunks CID are pinned to the indexer IPFS local node so that the chunks can be available on IPFS at anytime.
+The metadata chunks CID are pinned to the indexer IPFS local node so that the chunks can be available on IPFS at anytime. That way, the files can be downloaded **unstoppably**.
 
 
 ### Content consuming workflow
