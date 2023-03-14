@@ -106,6 +106,9 @@ Files are splitted across multiple chunks. `FileChunk` is the data structure tha
 
 ### Content publishing workflow
 
+When a user uploads a file, it is splitted in different chunks, which are individually uploaded to IPFS. All the chunks and their index are referenced in a JSON dataset (NFT), encrypted by iExec SDK, before being uploaded on-chain. The process of splitting the file and before encrypting the dataset acts as a double safety, because if anyone manages to gets one of the file CIDs content, he won't be able to read it, making the app process **unstoppable**.
+After the dataset is published on-chain, the uploader creates, signs and publishes on the iExec marketplace a dataset order. This dataset order will be matched with the request order published by the indexer, so that the he can access the dataset through the USDL app, and index the file by keeping the dataset in its Metadata database.
+
 
 ### Content indexing workflow
 
