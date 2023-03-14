@@ -106,8 +106,16 @@ Files are splitted across multiple chunks. `FileChunk` is the data structure tha
 
 ### Content publishing workflow
 
-When a user uploads a file, it is splitted in different chunks, which are individually uploaded to IPFS. All the chunks and their index are referenced in a JSON dataset (NFT), encrypted by iExec SDK, before being uploaded on-chain. The process of splitting the file and before encrypting the dataset acts as a double safety, because if anyone manages to gets one of the file CIDs content, he won't be able to read it, making the app process **unstoppable**.
-After the dataset is published on-chain, the uploader creates, signs and publishes on the iExec marketplace a dataset order. This dataset order will be matched with the request order published by the indexer, so that the he can access the dataset through the USDL app, and index the file by keeping the dataset in its Metadata database.
+The publising workflow happens in 3 steps.
+
+#### Step 1: chunk splitting
+When a user uploads a file, it is splitted in different chunks, which are individually uploaded to IPFS. The file splitting acts as an additionnal safety, by preventing an intruder who accesses a single CID to read the content of the file, as it isn't complete.
+
+#### Step 2: dataset encryption and deployment
+All the chunks and the uploaded file's metadata (filename, category, title...) are referenced in a JSON dataset (NFT). This dataset is encrypted by iExec SDK, before being deployed on-chain. The combination of Steps 1 and 2 makes is part of the global workflow making the app process **unstoppable**.
+
+#### Step 3: making orders
+After the dataset is deployed, the uploader creates, signs and publishes on the iExec marketplace a dataset order for the previously deployed dataset. No requester restrict is entered while making the dataset order, allowing any user who wishes to be a USDL indexer to access the content of the dataset via the USDL app. This dataset order will be matched and dealed on the blockchain with the request order published by the indexer, and the task result (the uploaded file's metadata) will be stored in the indexer's Metadata database.
 
 
 ### Content indexing workflow
