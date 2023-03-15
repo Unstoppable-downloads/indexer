@@ -23,7 +23,7 @@ const MetaData = Schema("MetaData", {
     imdbImageUrl: {type: String},
     imdbRessourceUrl: {type: String},
     year: {type: Number},
-    starring: {type: String},
+    casts: {type: Array},
     directedBy: {type: String},
     hash: { type: String },
     chunks: { type: Array, required: true },
