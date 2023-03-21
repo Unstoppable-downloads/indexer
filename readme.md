@@ -19,9 +19,8 @@ Ultimately, this empowerment means that everyone bears the sole responsibility o
     - [Metadata](#metadata)
     - [FileChunk](#filechunk)
   - [Unstoppable architecture](#unstoppable-architecture)
-    - [Current topology](#current-topology)
-    - [Way forward](#way-forward)
-    - [Alternative way forward](#alternative-way-forward)
+    - [Topology](#topology)
+    - [Indexing service discovery] (#indexing-service-discovery)
   - [Workflows](#workflows)
     - [Content publishing workflow](#content-publishing-workflow)
     - [Content indexing workflow](#content-indexing-workflow)
@@ -96,11 +95,9 @@ Files are splitted across multiple chunks. `FileChunk` is the data structure tha
 
 ## Unstoppable architecture
 
-### Current topology
+### Topology
 
-### Way forward 
-
-### Alternative way forward
+### Indexing service discovery
 
 ## Workflows
 

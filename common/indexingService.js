@@ -30,7 +30,7 @@ module.exports.init = function() {
 
     setInterval(() => {
       pollRegistry()
-    }, 500000)
+    }, 60000)
 };
 
 module.exports.add = function(item) {

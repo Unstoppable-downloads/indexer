@@ -47,6 +47,7 @@ const downloadResult = async (taskId, firstIndexingDate) => {
 
 const updateMetadata = async (newData, firstIndexingDate) => {
   const parsedMetaData = JSON.parse(newData);
+
   if (!parsedMetaData.id) {
     parsedMetaData.id = parsedMetaData.uid;
   }
@@ -64,33 +65,38 @@ const updateMetadata = async (newData, firstIndexingDate) => {
 
   if (parsedMetaData && parsedMetaData.category && (parsedMetaData.category === "movie" || parsedMetaData.category === "series")) {
     const imdbInfo = await getIMDBInfo(parsedMetaData.title)
-    if (imdbInfo && imdbInfo.meta) {
-      if (imdbInfo.meta.image.src) parsedMetaData.imdbImageUrl = imdbInfo.meta.image.src; //URL du result
-      if (imdbInfo.meta.year)      parsedMetaData.year = imdbInfo.meta.year;
-      //if (imdbInfo.meta.starring)  parsedMetaData.starring = imdbInfo.meta.starring
-    }
-
-    const moreDetails = await movier.getTitleDetailsByName(parsedMetaData.title);
-    if (moreDetails.directors[0].name) {
-      parsedMetaData.directedBy = moreDetails.directors[0].name;
-    }
-    if (moreDetails.casts) {
-      var casts = moreDetails.casts;
-      var starring = [];
-      for (var i = 0; i < casts.length && i < 5; i += 1) {
-        var actor = { actorName: casts[i].name, actorImdb: casts[i].source.sourceUrl };
-        starring[i] = actor;
+    console.log("imdbInfo", imdbInfo);
+    if (!imdbInfo.isCached) {
+      var sourceID = ""
+      if (imdbInfo && imdbInfo.meta) {
+        if (imdbInfo.meta.image.src) parsedMetaData.imdbImageUrl = imdbInfo.meta.image.src; //URL du result
+        if (imdbInfo.meta.year)      parsedMetaData.year = imdbInfo.meta.year;
+        if (imdbInfo.meta.id)        sourceID = imdbInfo.meta.id;
       }
-      
-      parsedMetaData.casts = starring;
-    }
-    if (moreDetails.mainSource.sourceUrl){
-      parsedMetaData.imdbRessourceUrl = moreDetails.mainSource.sourceUrl;
-    }
-    if (moreDetails.plot) {
-      parsedMetaData.description += moreDetails.plot;
+      console.log("source ID", sourceID)
+      const moreDetails = await movier.getTitleDetailsByIMDBId(sourceID);
+      if (moreDetails.directors[0].name) {
+        parsedMetaData.directedBy = moreDetails.directors[0].name;
+      }
+      if (moreDetails.casts) {
+        var casts = moreDetails.casts;
+        var starring = [];
+        for (var i = 0; i < casts.length && i < 5; i += 1) {
+          var actor = { actorName: casts[i].name, actorImdb: casts[i].source.sourceUrl };
+          starring[i] = actor;
+        }
+        
+        parsedMetaData.casts = starring;
+      }
+      if (moreDetails.mainSource.sourceUrl){
+        parsedMetaData.imdbRessourceUrl = moreDetails.mainSource.sourceUrl;
+      }
+      if (moreDetails.plot) {
+        parsedMetaData.description += moreDetails.plot;
+      }
     }
   }
+  
   try {
     const md = JSON.parse(fs.readFileSync("databases/MetaData.json"))
 

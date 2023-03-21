@@ -147,7 +147,7 @@ const pollRegistry = async function () {
 
           const tskId = oneDeal.tasks[0];
           const theTask = await iexec.task.show(tskId);
-          console.log("theTask", theTask);
+          //console.log("theTask", theTask);
 
           skipTaskExecution =
             skipTaskExecution ||
@@ -156,7 +156,7 @@ const pollRegistry = async function () {
             theTask.statusName === "CLAIMED" ||
             theTask.statusName === "ACTIVE";
 
-          console.log("oneDeal start time ", oneDeal.startTime.toNumber())
+          //console.log("oneDeal start time ", oneDeal.startTime.toNumber())
           let firstDealDateTime = oneDeal.startTime.toNumber();
 
           if (theTask.status === STATUS_COMPLETED_TASK) {
